@@ -1,6 +1,6 @@
 
 async function verify(password){
-	if(password == "yadda"){
+	if(password == process.env.pes){
 		return true;
 	}
 	return false;
