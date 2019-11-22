@@ -1,0 +1,292 @@
+@font-face{
+	font-family: Titilium;
+	src: url("./Fonts/Formal/titillium-web/TitilliumWeb-Regular.ttf");
+}
+@font-face{
+	font-family: Comfortaa;
+	src: url("./Fonts/Normal/comfortaa/Comfortaa.ttf");
+}
+@font-face{
+	font-family: Ubuntu;
+	src: url("./Fonts/Normal/ubuntu/Ubuntu.ttf");
+}
+
+body{
+	font-size: 100%;
+	margin: 0; padding: 0;
+	font-family: Titilium;
+	background: #605760;
+}
+
+
+header.autocaps{
+	background: #1d111d;
+	padding: 30px 0px;
+	color: antiquewhite;
+	text-align: center;
+	font-size: 2em;
+	display: flex;
+	position: relative;
+	justify-content: center;
+	align-items: stretch;
+	font-family: Ubuntu;
+}
+header.autocaps::after{ 
+	width: 100%; height: 5px;
+	display: block; content: "";
+	background: rgba(250, 250, 250, 0.5);
+	position: absolute; top: 100%;
+	transition: transform 0.5s ease;
+	transform: scaleX(0); left: 0%;
+	transform-origin: bottom right;
+}
+header.autocaps:hover::after{
+	transform: scaleX(1); 
+	transform-origin: bottom left;
+} 
+header.autocaps span:first-of-type{
+	font-size: 0.8em; height: 100%;
+	display: inline-block;
+	margin: auto 0;
+}
+
+
+main{
+	display: block; margin: 0 auto;
+	font-family: Titilium;
+	width: 520px; max-width: 95%;
+	position: relative; 
+	display: flex; flex-flow: column wrap;
+}
+
+
+main section{
+	display: flex; border-radius: 5px;
+	flex-flow: column wrap;
+	border: 3px solid #1d111d;
+	box-shadow: 0px 0px 10px #1d111d;
+	max-width: 95%;
+	margin: 30px auto; position: relative;
+	background: rgba(250, 235, 215, 0.7); /* <- antiquewhite */
+}
+main section div{
+	position: relative; display: block;
+	width: 100%; height: 100%; 
+	left: 0%; top: 0%; z-index: 2;
+	padding: 10px; box-sizing: border-box;
+	background: rgba(250, 250, 250, 0.5);
+}
+main section div.imageBox{
+	z-index: 1; position: absolute;
+	background-image: url("./imgs/one.jpg");
+	background-repeat: no-repeat;
+	background-position: -150px 0px;
+	background-size: cover;
+}
+main section:nth-of-type(2) div.imageBox{
+	background-image: url("./imgs/five.jpg");
+	background-position: -50px 0px;
+} 
+main section header{
+	font-size: 1.5em;
+	padding: 10px 0px;
+	text-align: center;
+	font-family: Comfortaa;
+	font-weight: bold;
+}
+main section article{ 
+	max-width: 320px; 
+	position: relative;
+	margin: 0 auto;
+	font-size: 1.2em; 
+}
+main section small{
+	padding: 0 10px; font-size: 0.7em;
+}
+section q{ color: rgba(29, 17, 29, 0.9); }
+
+
+.bottom{
+	background: #1d111d;
+	overflow: hidden;
+	color: white;
+	display: flex; 
+	flex-flow: row wrap;
+	padding: 10px 0; margin: 0;
+}
+.bottom form{
+	display: flex; width: 100%; height: 100%;
+	justify-content: center;
+	flex-flow: column wrap;
+}
+.bottom section{
+	background: rgba(250, 250, 250, 0.302);
+	padding: 10px; max-width: 95%;
+}
+
+
+#signup .input_box{
+	display: flex; justify-content: center;
+	overflow: hidden; padding: 0;
+	background: transparent;
+	height: 30px; position: relative;
+}
+.input_box input{
+	width: 99%; height: 100%; 
+	font-family: Ubuntu;
+	border: none; border-radius: 30px;
+	box-sizing: border-box;
+	padding:0 50px 0 15px; 
+	color: #1d111d;
+	background: rgba(250, 250, 250, 0.85);
+}
+.input_box #switch{
+	display: flex; position: absolute;
+	z-index: 1; right: 15px; top: 0%;
+	height: 100%; padding: 0px 5px;
+	font-size: 0.9em; width: 15px;
+	flex-flow: column wrap; 
+	justify-content: center;
+	color: #1d111d; border: none;
+}
+#signup label{
+	display: flex; font-family: Ubuntu;
+	font-size: 0.8em; padding: 3px 0px 3px 10px;
+	margin: 5px 0px 30px 30px;
+	flex-flow: column wrap;
+	justify-content: center;
+	border-left: 3px solid rgba(29, 17, 29, 1);
+}
+
+#dropdown{
+	background: rgba(250, 250, 250, 0.85); 
+	border: none; height: 30px;
+	border-radius: 15px; 
+	padding: 0px 15px; color: #1d111d;
+}
+#dropdown *{
+	background: #1d111d; color: antiquewhite;
+}
+
+
+form .notification{
+	display: none; width: 100%; height: auto;
+	margin-bottom: 10px; background: transparent;
+}
+form .notification.show{ display: block; }
+form .notification i{
+	font-size: 1.2em; width: 100%; text-align: center; 
+	color: maroon; display: block;
+}
+form .notification i#success{ color: limegreen; }
+form .notification i.hide{ display: none; }
+form .notification div{
+	display: block; width:100%; padding: 2px 25%; font-size: 0.85em;
+	box-sizing: border-box; text-align: center; background: transparent;
+	height: auto; margin: 0; color: rgba(250, 250, 250, 0.85); 
+}
+
+
+.input_box.submit_box{
+	height: 40px; position: relative; overflow: hidden;
+}
+.submit_box.loading{
+	background: rgba(29, 17, 29, 0.5);
+}
+.input_box.submit_box > span{
+	display: none; position: absolute; top: 0%;
+	width: 250px; height: 100%; 
+	max-width: 95%; background: rgba(29, 17, 29, 0.9);
+	justify-content: center; align-items: center;
+}
+.submit_box.loading > span{ display: flex; }
+.submit_box > span b{
+	display: flex; height: 100%; width: 80px;
+	justify-content: space-evenly; align-items: center;
+}
+.submit_box > span b i{
+	display: block; height: 7px; width: 7px; 
+	background: #ffffff;
+	animation: fade 2s linear 0s infinite alternate;
+}
+.input_box > span b i:nth-of-type(2){ animation-delay: 0.5s; }
+.input_box > span b i:nth-of-type(3){ animation-delay: 1s; }
+
+@keyframes fade{
+	0%{ opacity: 1; }
+	50%{ opacity: 0.5; }
+	100%{ opacity: 1; }
+}
+
+.input_box #submit{
+	width: 250px; max-width: 95%;
+	display: flex; text-transform: uppercase;
+	flex-flow: column wrap;
+	justify-content: center;
+	box-shadow: 0px 0px 3px #1d111d;
+	border-radius: 3px; font-size: 1.2em;
+	background: #1d111d; color: antiquewhite;
+	height: 100%; padding:0px
+}
+
+
+
+footer{
+	color: antiquewhite; display: flex;
+	margin: 0; padding: 20px 0px; width: 100%;
+}
+footer nav{
+	display: flex; width: 100%; 
+	padding: 5px 20px; margin: auto;
+	justify-content: space-evenly;
+	max-width: 400px;
+}
+footer nav a{
+	padding: 10px; border-radius: 5px;
+	font-size: 1.4em;
+}
+footer nav a:hover{
+	text-decoration: underline;
+}
+footer nav a:active{
+	color: rgba(250, 250, 250, 0.3);
+}
+
+
+
+.wow{
+	visibility: hidden;
+}
+/*
+header.autocaps, body > main, footer{
+	display: none;
+}*/
+
+
+@media only screen and (min-width:480px){
+
+	header.autocaps{
+		font-size: 5em;
+	}
+
+	main section{
+		max-width: 100%; width: 100%;
+		border: 4px solid #1d111d;
+	}
+	main section:nth-of-type(1) div.imageBox{
+		background-position: -450px 0px;
+	}
+	main section:nth-of-type(2) div.imageBox{
+		background-position: -150px 0px;
+	}
+	main section article{
+		font-size: 2em;
+	}
+
+}
+
+@media only screen and (min-width:900px){
+
+	main{ width: 700px; }
+
+}
