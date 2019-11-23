@@ -1,5 +1,6 @@
 {
 
+	// eslint-disable-next-line no-undef
 	let wow = new WOW();
 	wow.init();
 

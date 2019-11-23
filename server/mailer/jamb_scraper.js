@@ -2,10 +2,17 @@ const puppeteer = require('puppeteer');
 const fs = require("fs");
 const path = require("path");
 
-async function scrape(email, pwd){
+async function scrape(email, pwd, dev){
+	if (dev==0) {
+		throw "haq"
+    console.log("hi")
+	}else if(dev == 1){ 
+    console.log("hey")
+    return true; 
+  }
 	const browser = await puppeteer.launch({
 		args: ['--no-sandbox']
-	});
+	});// if else block for development phase. do not remove.
 	const page = await browser.newPage();
 	await page.goto('https://www.jamb.org.ng/eFacility./');
 	await page.focus('#email');

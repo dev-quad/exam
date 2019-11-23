@@ -1,18 +1,12 @@
 /* eslint-disable no-inner-declarations */
 const fs = require("fs");
 const path = require("path");
-const nodemailer = require("nodemailer");
 const get_admission_status = require("./jamb_scraper.js");
 const update_stats = require("../update_stats.js");
 const log_func = require("../logger.js");
+const mail = require("./mail_sender.js");
 
-const transporter = nodemailer.createTransport({
-	service: "gmail",
-	auth: {
-		user: process.env.gmail,
-		pass: process.env.pas
-	}
-})
+let session_count = 0;
 
 let error_count = 0;
 async function log_error(msg, err){
@@ -20,12 +14,10 @@ async function log_error(msg, err){
 	error_count++;
 }
 
-
 async function send_mail(email, status){
 	let d = (new Date()).toString();
 	let result = status;
-	let receipt = await transporter.sendMail({
-		from: process.env.gmail,
+	let receipt = await mail({
 		to: email,
 		subject: "Admission status update from AutoCaps",
 		html: `
@@ -50,37 +42,43 @@ ${d}
 	return true;
 }
 
-async function handle_user({mail: jamb, password: pwd, email: personal}){
-	let err = false;
-	console.log("scraping...");
+async function handle_user({jamb: jamb, email: personal, password: pwd}){	
+	console.log(session_count+" scraping...");
 	// status variable returns boolean, showing is admission status
 	let status = await get_admission_status(jamb, pwd).catch((e) => {
 		log_error(`Error getting admission status for user where mail: ${jamb}`, e);
-		err = true;
+		throw e;
 	});// get admission status
 	console.log(`Admission status : ${status}`);
-	if(err){ return; }
-	let is_mail_sent = true;
 	await send_mail(personal, status).catch((e) => {
-		is_mail_sent = false;
-		log_error(`Error sending email to ${personal}`, e);
+		log_error(`Error on ${jamb}. Unable to send email to ${personal}`, e);
+		throw e;
 	});// send mail to user
-	console.log(`Sent mail? ${is_mail_sent}`);
+	console.log(`Sent mail`);
+	return;
 }
+
 
 let user_count = 0;
 async function do_session(){
 	return new Promise((resolve, reject) => {
-		fs.readFile(path.resolve(__dirname, "./db_test.json"), "utf8", async (err, data) => {
+		fs.readFile(path.resolve(__dirname, "../db.json"), "utf8", async (err, data) => {
 			if (err) {
-				log_error(`Error reading json : ${err}`);
+				log_error(`Error reading database. Unable to execute session : ${err}`);
 				return;
 			}
 			let db = JSON.parse(data.toString());
 			let users = db.users;
 			for(let u of users){
 				user_count++;
-				await handle_user(u);
+				if(session_count % u.frequency == 0 && u.count > 0){
+					continue;
+				}
+				let err_on_user = false;
+				await handle_user(u).catch(() => {
+					err_on_user = true;
+				});
+				if(!err_on_user){ u.count++; }
 				//if(user_count > 5 ){ break; }
 			}
 			resolve(true);
@@ -95,13 +93,17 @@ function loop_sessions(){
 	return new Promise((resolve, reject) => {
 		try{
 			let one_hour = 3600000;
-			let min_interval = one_hour * 12;// <- every 12 hours // 0.002778;
-      let count = 0;
+			let min_interval = one_hour * 12;// <- every 12 hours 
+			//let interval = one_hour * 0.002778;// <- every 10 secs for development;
 			let avg_time =[0,0];
 			async function run_sessions(){
 				console.log("Running session");
 				let s_start = (new Date()).getTime();
-				await do_session(++count);
+				let session_error = false;
+				await do_session().catch(() => {
+					session_error = true;
+				});
+				if(!session_error){ session_count++; }
 				let s_end = (new Date()).getTime();
 				let time_passed = s_end - s_start;
 				avg_time[0] += time_passed;
