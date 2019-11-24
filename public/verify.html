@@ -10,10 +10,12 @@
 		<link rel="stylesheet" href="./libs/fontawesome/css/font-awesome.min.css"/>
 	    <link rel="stylesheet" href="main.css" />
   </head>
-  <body>
+  <body class="expand">
+
     <header class="autocaps"><span>Auto</span><span>CAPS</span></header>
-    <main>
-      <section class="wow slideInLeft" style="{background:#394648de}">
+	
+	<main>
+      <section class="wow slideInLeft">
         <div class="imageBox"></div>
         <div>
           <header>Enter your Verification Code</header>
@@ -30,9 +32,22 @@
                   />
                 </div>
                 <label for="verify">A 6-digit verification code has been sent to your mail</label>
-                <div class="input_box submit_box">
-                  <input type="submit" value="SUBMIT" id="submit" />
-                </div>
+				
+				<div class="notification">
+					<i class='fa fa-warning' id="fail"></i>
+					<div id="notif_text">Warning text here</div>
+				</div>
+				
+				<div class="input_box submit_box">
+						<span>  
+							<b>
+								<i></i>
+								<i></i>
+								<i></i>
+							</b> 
+						</span>
+					<input type="submit" value="SUBMIT" id="submit">
+				</div>
             </form>
           </main>
         </div>

@@ -54,7 +54,6 @@
 			console.log("input failed tests");
 			notif.lastElementChild.innerHTML = "Please enter valid input";
 			notif.classList.add("show");
-			error = true;
 			btn.classList.remove("loading");
 			return;
 		}

@@ -37,6 +37,13 @@ async function add_user(obj){
 				return; 
 			}
 			let db = JSON.parse(data);
+			let users = db.users, jamb = obj.jamb;
+			for(let i in users){
+				if(users[i].jamb == jamb){
+					resolve(false);
+					return;
+				}
+			}
 			db.users.push(obj);
 			db = JSON.stringify(db);
 			fs.writeFile(path.resolve(__dirname, "./db.json"), db, (e) => {

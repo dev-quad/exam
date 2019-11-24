@@ -4,12 +4,10 @@ const path = require("path");
 
 async function scrape(email, pwd, dev){
 	if (dev==0) {
-		throw "haq"
-    console.log("hi")
+		throw "haq";
 	}else if(dev == 1){ 
-    console.log("hey")
-    return true; 
-  }
+		return true; 
+	}// <- for development
 	const browser = await puppeteer.launch({
 		args: ['--no-sandbox']
 	});// if else block for development phase. do not remove.

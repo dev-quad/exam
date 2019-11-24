@@ -153,7 +153,7 @@ app.post("/signup", upload.array(), async (req, res) => {
   let scraper = require("./server/mailer/jamb_scraper.js");
   let mail = require("./server/mailer/mail_sender.js");
 
-  await scraper(jamb, password, 1).catch(e => {
+  await scraper(jamb, password).catch(e => {
     ans.jamb = false;
     console.log(`Invalid jamb : ${e}`);
     res
@@ -164,7 +164,7 @@ app.post("/signup", upload.array(), async (req, res) => {
   if (!ans.jamb) {
     return;
   }
-  let verifyCode = Math.floor(Math.random() * 1000000 + 1);
+  let verifyCode = [0,0,0,0,0,0].map(() => Math.floor(Math.random() * 10)).join("");
   let receipt = await mail({
     to: email,
     subject: "Verify your AutoCAPS email",
@@ -182,20 +182,19 @@ app.post("/signup", upload.array(), async (req, res) => {
 </footer><br>
 <p><strong>Note:</strong> <kbd>Copyright 2019 by AutoCAPS. All Rights Reserved..</kbd></p>
 `
-  }, 1).catch(e => {
+  }).catch(e => {
     console.log(`Invalid personal : ${e}`);
     ans.personal = false;
   });
   console.log(receipt);
-  if (ans.personal) {
-    req.session.udata = udata;
-  }else{
+  if (!ans.personal) {
     res.status(200).type("json").json(ans);
   }
   if (ans.personal && ans.jamb){
-		console.log("all's well");
+		//console.log("all's well");
 		console.log(verifyCode);
 		req.session.user_temp_verify_code = verifyCode;
+		req.session.udata = udata;
 		res.redirect(302, "verify.html");
 		//res.sendFile(path.join(__dirname + "/public/verify.html"));
   }
@@ -206,18 +205,51 @@ app.post("/validate", upload.array(), async function(req, res) {
   let user_code = req.body.verify;
   let actual_code = req.session.user_temp_verify_code; 
   let udata = req.session.udata;
-  console.log(user_code, actual_code);
   let users = require("./server/users.js");
-  users.add(udata).catch(e => {
-		log_error(`Unable to add user ${udata.jamb}`, e);
-  });
-  if (user_code == actual_code){
-	res.redirect(302, "thanks.html");
+  //console.log(user_code, actual_code);
+
+  if(actual_code == undefined){
+	return res.redirect(302, "index.html");
   }
-  else {
-	res.sendFile(path.join(__dirname + "/public/verify.html"));
+  let ans = { 
+	is_valid: false, 
+	is_added: true, 
+	is_existing: false,
+	email: udata.email,	
+  };
+
+  if (user_code == actual_code){
+	ans.is_valid = true;
+	let new_user = await users.add(udata).catch(e => {
+		log_error(`Unable to add user ${udata.jamb}`, e);
+		ans.is_added = false;
+	});
+	if(!ans.is_added){
+		return res.status(200).type("json").json(ans);
+	}else if(!new_user){
+		ans.is_existing = true;
+		//console.log(`User ${udata.jamb} already exists`);
+		return res.status(200).type("json").json(ans);
+	}else{
+		return res.redirect(302, "thanks.html");
+	}
+  }else{
+	return res.status(200).type("json").json(ans);
   }
 });
+
+app.get("/reg_complete", (req, res) => {
+	let udata = req.session.udata || {};
+	if(!udata || !udata.frequency || isNaN(Number(udata.frequency))){
+		return res.redirect(302, "index.html");
+	}
+	let ans = {
+		frequency: udata.frequency,
+		email: udata.email
+	}
+	res.status(200).type("text").json(ans);
+	req.session.destroy();
+})
 
 
 /* ERROR pages */
@@ -229,7 +261,7 @@ app.use((req, res) => {
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
-  // add_err_to_log(500);
+  log_error(`500- Intenal Server Error`);
   res.status(500);
   res.set("Content-Type", "text/plain");
   res.send("500 - Internal Server Error");
