@@ -60,7 +60,7 @@
 
 		btn.classList.add("loading");
 		console.log("Verifying...");
-		
+
 		let queries = {
 			jamb: j_email,//"ademorotis@gmail.com",
 			email: u_email,//"leolaotan@gmail.com",
@@ -81,7 +81,7 @@
 			error = true;
 			btn.classList.remove("loading");
 			return;
-		})
+		});
 		if(error){ return; }
 		if(res.redirected && res.ok){
 			console.log(res);

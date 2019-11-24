@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
-
 const autocapsmail = "autocapsbot@gmail.com";
+
 const transporter = nodemailer.createTransport({
 	service: "gmail",
 	auth: {

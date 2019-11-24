@@ -153,7 +153,7 @@ app.post("/signup", upload.array(), async (req, res) => {
   let scraper = require("./server/mailer/jamb_scraper.js");
   let mail = require("./server/mailer/mail_sender.js");
 
-  await scraper(jamb, password).catch(e => {
+  await scraper(jamb, password, 1).catch(e => {
     ans.jamb = false;
     console.log(`Invalid jamb : ${e}`);
     res
@@ -182,7 +182,7 @@ app.post("/signup", upload.array(), async (req, res) => {
 </footer><br>
 <p><strong>Note:</strong> <kbd>Copyright 2019 by AutoCAPS. All Rights Reserved..</kbd></p>
 `
-  }).catch(e => {
+  }, 1).catch(e => {
     console.log(`Invalid personal : ${e}`);
     ans.personal = false;
   });

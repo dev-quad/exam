@@ -157,9 +157,10 @@ form{
 	border: none; border-radius: 30px;
 	box-sizing: border-box;
 	padding:0 50px 0 15px; 
-	color: #1d111d;
+	color: #1d111d; outline: none;
 	background: rgba(250, 250, 250, 0.85);
 }
+input:hover, input:active{ outline: none; }
 .input_box #switch{
 	display: flex; position: absolute;
 	z-index: 1; right: 15px; top: 0%;
@@ -215,12 +216,13 @@ form .notification div b{
 }
 .submit_box.loading{
 	background: rgba(29, 17, 29, 0.5);
+	margin: auto; width: 250px; max-width: 95%;
 }
 .input_box.submit_box > span{
 	display: none; position: absolute; top: 0%;
 	width: 250px; height: 100%; 
-	max-width: 95%; background: rgba(29, 17, 29, 0.9);
-	justify-content: center; align-items: center;
+	width: 100%; background: rgba(29, 17, 29, 0.9);
+	justify-content: center; align-items: center; overflow: hidden;
 }
 .submit_box.loading > span{ display: flex; }
 .submit_box > span b{
@@ -228,24 +230,28 @@ form .notification div b{
 	justify-content: space-evenly; align-items: center;
 }
 .submit_box > span b i{
-	display: block; height: 7px; width: 7px; 
-	background: #ffffff;
-	animation: fade 2s linear 0s infinite alternate;
+	display: block; height: 7px; width: 7px; left: -10%;
+	background: #ffffff; position: absolute; opacity: 0.1;
+	border-radius: 50%;
+	animation: fade 2s linear 0s infinite;
 }
 .input_box > span b i:nth-of-type(2){ animation-delay: 0.5s; }
 .input_box > span b i:nth-of-type(3){ animation-delay: 1s; }
 
+
 @keyframes fade{
-	0%{ opacity: 1; }
-	50%{ opacity: 0.5; }
-	100%{ opacity: 1; }
+	0%{ left: -10%; opacity: 0.1; border-radius: 50%; }
+	30%{ left: 42%; opacity: 1; border-radius: 50%; }
+	70%{ left: 58%; opacity: 1; border-radius: 50%; }
+	100%{ left: 110%; opacity: 0.1; border-radius: 50%; }
 }
+
 
 
 .input_box #submit{
 	width: 250px; max-width: 95%;
 	display: flex; text-transform: uppercase;
-	flex-flow: column wrap;
+	flex-flow: column wrap; margin: 0px;
 	justify-content: center;
 	align-items:center;
 	text-align:center;
