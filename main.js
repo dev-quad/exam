@@ -4,15 +4,14 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const multer = require("multer"); // v1.0.5
 const upload = multer();
+const session = require("express-session");
 const fs = require("fs");
-var verifyCode;
-app.set("port", process.env.PORT || 8080);
-app.use(express.static(__dirname + "/public"));
 
 const log_error = require("./server/logger.js");
 const verify = require("./server/verify.js");
 
 app.set("port", process.env.PORT || 8080);
+
 app.use(express.static(__dirname + "/public"));
 app.use(
   bodyParser.urlencoded({
@@ -20,6 +19,11 @@ app.use(
   })
 );
 app.use(bodyParser.json());
+app.use(session({
+	secret: "autocapssecretapp",
+	resave: false,
+	saveUninitialized: false
+}))
 
 app.get("/", async (req, res) => {
   res.status(200);
@@ -127,7 +131,6 @@ app.get("/admin/:password/errors", async (req, res, next) => {
 });
 
 app.post("/signup", upload.array(), async (req, res) => {
-  console.log(req.body);
   let jamb = req.body.jamb;
   let password = req.body.password;
   let email = req.body.email; 
@@ -150,7 +153,7 @@ app.post("/signup", upload.array(), async (req, res) => {
   let scraper = require("./server/mailer/jamb_scraper.js");
   let mail = require("./server/mailer/mail_sender.js");
 
-  await scraper(jamb, password).catch(e => {
+  await scraper(jamb, password, 1).catch(e => {
     ans.jamb = false;
     console.log(`Invalid jamb : ${e}`);
     res
@@ -161,7 +164,7 @@ app.post("/signup", upload.array(), async (req, res) => {
   if (!ans.jamb) {
     return;
   }
-  verifyCode = Math.floor(Math.random() * 1000000 + 1);
+  let verifyCode = Math.floor(Math.random() * 1000000 + 1);
   let receipt = await mail({
     to: email,
     subject: "Verify your AutoCAPS email",
@@ -179,32 +182,40 @@ app.post("/signup", upload.array(), async (req, res) => {
 </footer><br>
 <p><strong>Note:</strong> <kbd>Copyright 2019 by AutoCAPS. All Rights Reserved..</kbd></p>
 `
-  }).catch(e => {
+  }, 1).catch(e => {
     console.log(`Invalid personal : ${e}`);
     ans.personal = false;
   });
   console.log(receipt);
   if (ans.personal) {
-    let users = require("./server/users.js");
-    users.add(udata).catch(e => {
-      log_error(`Unable to add user ${udata.jamb}`, e);
-    });
-  }
-  if (ans.personal && ans.jamb){
-    res.sendFile(path.join(__dirname + "/public/verify.html"));
-  }
-  else{
+    req.session.udata = udata;
+  }else{
     res.status(200).type("json").json(ans);
   }
+  if (ans.personal && ans.jamb){
+		console.log("all's well");
+		console.log(verifyCode);
+		req.session.user_temp_verify_code = verifyCode;
+		res.redirect(302, "verify.html");
+		//res.sendFile(path.join(__dirname + "/public/verify.html"));
+  }
+  
 });
-app.post("/validate", upload.array(), async function(req, res, next) {
-  console.log(req.body.verify);
-  console.log(verifyCode);
-  if (req.body.verify==verifyCode){
-	  res.sendFile(path.join(__dirname + "/public/thanks.html"));
+
+app.post("/validate", upload.array(), async function(req, res) {
+  let user_code = req.body.verify;
+  let actual_code = req.session.user_temp_verify_code; 
+  let udata = req.session.udata;
+  console.log(user_code, actual_code);
+  let users = require("./server/users.js");
+  users.add(udata).catch(e => {
+		log_error(`Unable to add user ${udata.jamb}`, e);
+  });
+  if (user_code == actual_code){
+	res.redirect(302, "thanks.html");
   }
   else {
-	  res.sendFile(path.join(__dirname + "/public/verify.html"));
+	res.sendFile(path.join(__dirname + "/public/verify.html"));
   }
 });
 

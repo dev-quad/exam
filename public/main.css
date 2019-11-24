@@ -1,14 +1,14 @@
 @font-face{
 	font-family: Titilium;
-	src: url("./Fonts/Formal/titillium-web/TitilliumWeb-Regular.ttf");
+	src: url("./fonts/Formal/titillium-web/TitilliumWeb-Regular.ttf");
 }
 @font-face{
 	font-family: Comfortaa;
-	src: url("./Fonts/Normal/comfortaa/Comfortaa.ttf");
+	src: url("./fonts/Normal/comfortaa/Comfortaa.ttf");
 }
 @font-face{
 	font-family: Ubuntu;
-	src: url("./Fonts/Normal/ubuntu/Ubuntu.ttf");
+	src: url("./fonts/Normal/ubuntu/Ubuntu.ttf");
 }
 
 
@@ -177,9 +177,57 @@ label{
 	background: #161925; color: antiquewhite;
 }
 
-.input_box.submit_box{
-	height: 40px; text-align:center;
+
+form .notification{
+	display: none; width: 100%; height: auto;
+	margin-bottom: 10px; background: transparent;
 }
+form .notification.show{ display: block; }
+form .notification i{
+	font-size: 1.2em; width: 100%; text-align: center; 
+	color: maroon; display: block;
+}
+form .notification i#success{ color: limegreen; }
+form .notification i.hide{ display: none; }
+form .notification div{
+	display: block; width:100%; padding: 2px 25%; font-size: 0.85em;
+	box-sizing: border-box; text-align: center; background: transparent;
+	height: auto; margin: 0; color: rgba(250, 250, 250, 0.85); 
+}
+
+
+.input_box.submit_box{
+	height: 40px; position: relative; overflow: hidden;
+}
+.submit_box.loading{
+	background: rgba(29, 17, 29, 0.5);
+}
+.input_box.submit_box > span{
+	display: none; position: absolute; top: 0%;
+	width: 250px; height: 100%; 
+	max-width: 95%; background: rgba(29, 17, 29, 0.9);
+	justify-content: center; align-items: center;
+}
+.submit_box.loading > span{ display: flex; }
+.submit_box > span b{
+	display: flex; height: 100%; width: 80px;
+	justify-content: space-evenly; align-items: center;
+}
+.submit_box > span b i{
+	display: block; height: 7px; width: 7px; 
+	background: #ffffff;
+	animation: fade 2s linear 0s infinite alternate;
+}
+.input_box > span b i:nth-of-type(2){ animation-delay: 0.5s; }
+.input_box > span b i:nth-of-type(3){ animation-delay: 1s; }
+
+@keyframes fade{
+	0%{ opacity: 1; }
+	50%{ opacity: 0.5; }
+	100%{ opacity: 1; }
+}
+
+
 .input_box #submit{
 	width: 250px; max-width: 95%;
 	display: flex; text-transform: uppercase;
